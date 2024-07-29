@@ -24,10 +24,23 @@ credentials as needed.
 
 ## Configuration
 
+> [!NOTE]
+> The Docker CLI (`docker`) is the process that calls credential helpers, not
+> the daemon. All environment variables (`PATH` and others) need to be set for
+> the process calling Docker, and the executing user needs to be able to execute
+> the helper binary.
+
+### Installation
+
+The binary needs to be added to the local `PATH` in order to be accessible to
+Docker for use. The Docker CLI calls the helper (not the daemon), so the
+executing user's `PATH` is used.
+
 ### Registry configuration
 
 The plugin uses environment variables in a particular format to supply
-credentials to the Docker process.
+credentials to the Docker process. These environment variables need to be
+present in the process executing the `docker` CLI command.
 
 All environment variables have the form:
 `DOCKER_CREDENTIALS_ENV_<REGISTRYURL>_<USER|PASSWORD>`, where:
