@@ -11,17 +11,14 @@ import (
 	"github.com/docker/docker-credential-helpers/credentials"
 )
 
+var ErrNotImplemented = errors.New("not implemented")
+
 var nonAlphanumericPattern = regexp.MustCompile(`[^a-zA-Z0-9]`)
 
 // must implement the Helper interface
 var _ credentials.Helper = EnvHelper{}
 
 type EnvHelper struct {
-}
-
-func (e EnvHelper) Add(creds *credentials.Credentials) error {
-	slog.Info("", "action", "add", "serverURL", creds.ServerURL, "username", creds.Username)
-	return errors.New("add not implemented")
 }
 
 func (e EnvHelper) Get(serverURL string) (string, string, error) {
@@ -36,15 +33,21 @@ func (e EnvHelper) Get(serverURL string) (string, string, error) {
 
 }
 
+func (e EnvHelper) Add(creds *credentials.Credentials) error {
+
+	slog.Info("", "action", "add", "serverURL", creds.ServerURL, "username", creds.Username)
+	return ErrNotImplemented
+}
+
 func (e EnvHelper) Delete(serverURL string) error {
 	slog.Info("", "action", "delete", "serverURL", serverURL)
-	return errors.New("delete not implemented")
+	return ErrNotImplemented
 }
 
 func (e EnvHelper) List() (map[string]string, error) {
 	slog.Info("", "action", "list")
 
-	return map[string]string{}, errors.New("list not implemented")
+	return nil, ErrNotImplemented
 }
 
 // credentialsForServer uses the normalized server URL to lookup a pair of environment variables.
