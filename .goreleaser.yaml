@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
+version: 2
+
+builds:
+  - id: release
+    binary: docker-credential-env
+    env:
+      - CGO_ENABLED=0
+    flags:
+      - -trimpath
+    ldflags:
+      - '-s -w -X "main.Version={{.Version}}" -X "main.Revision={{.FullCommit}}"'
+    goos:
+      - darwin
+      - linux
+      - windows
+    goarch:
+      - amd64
+      - arm64
+
+checksum:
+  name_template: "checksums.txt"
+
+archives:
+  - format: tar.gz
+    name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
+
+changelog:
+  use: github-native
+  sort: asc
+
+release:
+  prerelease: auto
+  header: |
+    Distributions for this release are published as binaries below.
+
+    In order for Docker to be able to use the binary, it must be in the PATH, have the name `docker-credential-env`, and be executable by the required user. Note that it is sufficient to create an appropriately named symoblic link to make it discoverable by Docker.
+
+    Binaries are available for Mac, Linux and Windows.
