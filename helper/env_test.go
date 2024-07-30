@@ -21,6 +21,17 @@ func TestEnvHelper_Get_Success(t *testing.T) {
 	assert.Equal(t, "testpassword", password)
 }
 
+func TestEnvHelper_Get_CredentialsOptional_Success(t *testing.T) {
+
+	helper := EnvHelper{CredentialsOptional: true}
+
+	user, password, err := helper.Get("example.com")
+
+	assert.NoError(t, err)
+	assert.Empty(t, user)
+	assert.Empty(t, password)
+}
+
 func TestEnvHelper_Get_Failure(t *testing.T) {
 	helper := EnvHelper{}
 

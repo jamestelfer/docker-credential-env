@@ -19,15 +19,27 @@ var nonAlphanumericPattern = regexp.MustCompile(`[^a-zA-Z0-9]`)
 var _ credentials.Helper = EnvHelper{}
 
 type EnvHelper struct {
+	CredentialsOptional bool
 }
 
+// Get retrieves the credentials for the server URL from the process
+// environment.
 func (e EnvHelper) Get(serverURL string) (string, string, error) {
 	logger := slog.Default().With("action", "get", "serverURL", serverURL)
 
-	// FIXME: allow this to return empty on failure if so configured
 	user, password, err := credentialsForServer(serverURL)
 
-	logger.Info("Get", "user", user, "err", err)
+	if err != nil {
+		if e.CredentialsOptional {
+			logger.Warn("Ignoring failed credential lookup, unset DOCKER_CREDENTIALS_ENV_OPTIONAL if this should cause Docker to fail", "err", err)
+			return "", "", nil
+		}
+
+		logger.Error("Failed to retrieve credentials, set DOCKER_CREDENTIALS_ENV_OPTIONAL to ignore this error.", "err", err)
+		return "", "", err
+	}
+
+	logger.Info("Got credentials from environment", "user", user, "err", err)
 
 	return user, password, err
 }
@@ -43,8 +55,7 @@ func (e EnvHelper) Delete(serverURL string) error {
 }
 
 func (e EnvHelper) List() (map[string]string, error) {
-	slog.Info("", "action", "list")
-
+	slog.Error("List action not implemented", "action", "list")
 	return nil, ErrNotImplemented
 }
 
