@@ -21,6 +21,17 @@ func TestEnvHelper_Get_Success(t *testing.T) {
 	assert.Equal(t, "testpassword", password)
 }
 
+func TestEnvHelper_Get_CredentialsOptional_Success(t *testing.T) {
+
+	helper := EnvHelper{CredentialsOptional: true}
+
+	user, password, err := helper.Get("example.com")
+
+	assert.NoError(t, err)
+	assert.Empty(t, user)
+	assert.Empty(t, password)
+}
+
 func TestEnvHelper_Get_Failure(t *testing.T) {
 	helper := EnvHelper{}
 
@@ -31,19 +42,19 @@ func TestEnvHelper_Get_Failure(t *testing.T) {
 	assert.Empty(t, password)
 }
 
-func TestEnvHelper_Add(t *testing.T) {
+func TestEnvHelper_Add_FailsSilently(t *testing.T) {
 	helper := EnvHelper{}
 	err := helper.Add(&credentials.Credentials{})
-	assert.ErrorIs(t, err, ErrNotImplemented)
+	assert.NoError(t, err)
 }
 
-func TestEnvHelper_Delete(t *testing.T) {
+func TestEnvHelper_Delete_FailsSilently(t *testing.T) {
 	helper := EnvHelper{}
 	err := helper.Delete("foo")
-	assert.ErrorIs(t, err, ErrNotImplemented)
+	assert.NoError(t, err)
 }
 
-func TestEnvHelper_List(t *testing.T) {
+func TestEnvHelper_List_NotImplemented(t *testing.T) {
 	helper := EnvHelper{}
 	_, err := helper.List()
 	assert.ErrorIs(t, err, ErrNotImplemented)

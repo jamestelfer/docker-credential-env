@@ -21,7 +21,9 @@ func main() {
 
 	configureLogging()
 
-	credentials.Serve(helper.EnvHelper{})
+	credentialsOptional := os.Getenv("DOCKER_CREDENTIALS_ENV_OPTIONAL") == "true"
+
+	credentials.Serve(helper.EnvHelper{CredentialsOptional: credentialsOptional})
 }
 
 func configureLogging() {
