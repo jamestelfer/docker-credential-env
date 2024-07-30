@@ -32,8 +32,12 @@ changelog:
 release:
   prerelease: auto
   header: |
-    Distributions for this release are published as binaries below.
+    Distributions for this release are published as binaries for Mac, Linux and Windows below. Download, extract and install the binary appropriate to the target system in order to use it as a credential helper.
 
-    In order for Docker to be able to use the binary, it must be in the PATH, have the name `docker-credential-env`, and be executable by the required user. Note that it is sufficient to create an appropriately named symoblic link to make it discoverable by Docker.
+    In order for Docker to be able to use the binary, it must be:
 
-    Binaries are available for Mac, Linux and Windows.
+    - in the PATH
+    - have the name `docker-credential-env`, and
+    - be executable by the required user.
+
+    Note that it is sufficient to create an appropriately named symbolic link to make it discoverable by Docker.
