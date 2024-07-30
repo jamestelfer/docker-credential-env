@@ -21,6 +21,13 @@ builds:
 checksum:
   name_template: "checksums.txt"
 
+nfpms:
+  - id: rpm
+    formats:
+      - apk
+      - deb
+      - rpm
+
 archives:
   - format: tar.gz
     name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
