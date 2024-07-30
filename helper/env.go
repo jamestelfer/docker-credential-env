@@ -30,18 +30,16 @@ func (e EnvHelper) Get(serverURL string) (string, string, error) {
 	logger.Info("Get", "user", user, "err", err)
 
 	return user, password, err
-
 }
 
 func (e EnvHelper) Add(creds *credentials.Credentials) error {
-
-	slog.Info("", "action", "add", "serverURL", creds.ServerURL, "username", creds.Username)
-	return ErrNotImplemented
+	slog.Warn("Saving credentials is not supported by docker-credential-env", "action", "add", "serverURL", creds.ServerURL, "username", creds.Username)
+	return nil
 }
 
 func (e EnvHelper) Delete(serverURL string) error {
-	slog.Info("", "action", "delete", "serverURL", serverURL)
-	return ErrNotImplemented
+	slog.Warn("Deleting credentials is not supported by docker-credential-env", "action", "delete", "serverURL", serverURL)
+	return nil
 }
 
 func (e EnvHelper) List() (map[string]string, error) {
