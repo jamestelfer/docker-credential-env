@@ -8,7 +8,7 @@ import (
 	"github.com/jamestelfer/docker-credential-env/helper"
 )
 
-// FIXME set at build time: goreleaser or Make
+// Set at build time by Goreleaser
 var Version string = "v0.0.0-unknown"
 var Revision string = "unknown"
 
