@@ -8,6 +8,21 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+type entry struct {
+	url          string
+	user         string
+	password     string
+	omitPassword bool
+}
+
+func (e entry) Set(t *testing.T) {
+	normalized := normalizeServerName(e.url)
+	t.Setenv(envVarName(normalized, userSuffix), e.user)
+	if !e.omitPassword {
+		t.Setenv(envVarName(normalized, passwordSuffix), e.password)
+	}
+}
+
 func TestEnvHelper_Get_Success(t *testing.T) {
 	setTestEnv(t, "DOCKER_CREDENTIALS_ENV_EXAMPLE_COM_USER", "testuser")
 	setTestEnv(t, "DOCKER_CREDENTIALS_ENV_EXAMPLE_COM_PASSWORD", "testpassword")
@@ -54,10 +69,86 @@ func TestEnvHelper_Delete_FailsSilently(t *testing.T) {
 	assert.NoError(t, err)
 }
 
-func TestEnvHelper_List_NotImplemented(t *testing.T) {
-	helper := EnvHelper{}
-	_, err := helper.List()
-	assert.ErrorIs(t, err, ErrNotImplemented)
+func TestEnvHelper_List(t *testing.T) {
+	// empty with none
+	// users where supplied
+	// skip when password is missing
+
+	tests := []struct {
+		name     string
+		entries  []entry
+		env      map[string]string
+		expected map[string]string
+	}{
+		{
+			name: "normal",
+			entries: []entry{
+				{url: "example.com", user: "testuser", password: "testpassword"},
+				{url: defaultRegistryUrl, user: "hubuser", password: "hubpassword"},
+			},
+			expected: map[string]string{
+				"example.com":      "testuser",
+				defaultRegistryUrl: "hubuser",
+			},
+		},
+		{
+			name: "default registry",
+			entries: []entry{
+				{url: defaultRegistryUrl, user: "hubuser", password: "hubpassword"},
+			},
+			expected: map[string]string{
+				defaultRegistryUrl: "hubuser",
+			},
+		},
+		{
+			name: "missing password",
+			entries: []entry{
+				{url: "nopassword.test", user: "missing", omitPassword: true},
+			},
+			expected: map[string]string{},
+		},
+		{
+			name: "empty user",
+			entries: []entry{
+				{url: "example.com", user: "", password: "testpassword"},
+			},
+			expected: map[string]string{},
+		},
+		{
+			name:    "malformed env",
+			entries: []entry{},
+			env: map[string]string{
+				// these env entries are malformed and should be ignored
+				"DOCKER_CREDENTIALS_ENV_EXAMPLE_COM_USR":       "testuser",
+				"DOCKER_CREDENTIALS_ENV_EXAMPLE_COM_PASSWORD":  "testpassword",
+				"DOCKER_CREDENTIALS_ENV_INDEX_DOCKER_IO_USER":  "hubuser",
+				"DOCKER_CREDENTIALS_ENV_INDEX_DOCKER_IO_PASS":  "hubpassword",
+				"DOCKER_CREDENTIALS_ENV_EXAMPLE2_COM_USERS":    "testuser",
+				"DOCKER_CREDENTIALS_ENV_EXAMPLE2_COM_PASSWORD": "testpassword",
+			},
+			expected: map[string]string{},
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			for _, e := range test.entries {
+				e.Set(t)
+			}
+			if test.env != nil {
+				for k, v := range test.env {
+					t.Setenv(k, v)
+				}
+			}
+
+			helper := EnvHelper{}
+			r, err := helper.List()
+
+			assert.NoError(t, err)
+			assert.Equal(t, test.expected, r)
+		})
+	}
+
 }
 
 func TestCredentialsForServerSuccess(t *testing.T) {
