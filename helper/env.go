@@ -15,6 +15,14 @@ var ErrNotImplemented = errors.New("not implemented")
 
 var nonAlphanumericPattern = regexp.MustCompile(`[^a-zA-Z0-9]`)
 
+const (
+	variablePrefix = "DOCKER_CREDENTIALS_ENV"
+	userSuffix     = "USER"
+	passwordSuffix = "PASSWORD"
+
+	defaultRegistryUrl = "https://index.docker.io/v1"
+)
+
 // must implement the Helper interface
 var _ credentials.Helper = EnvHelper{}
 
@@ -55,8 +63,7 @@ func (e EnvHelper) Delete(serverURL string) error {
 }
 
 func (e EnvHelper) List() (map[string]string, error) {
-	slog.Error("List action not implemented", "action", "list")
-	return nil, ErrNotImplemented
+	return listCredentialsForEnvironment(), nil
 }
 
 // credentialsForServer uses the normalized server URL to lookup a pair of environment variables.
@@ -64,8 +71,8 @@ func credentialsForServer(serverURL string) (string, string, error) {
 	normalizedServerName := normalizeServerName(serverURL)
 
 	// generate the names, used later in the error message if needed
-	userEnv := envVarName(normalizedServerName, "USER")
-	passwordEnv := envVarName(normalizedServerName, "PASSWORD")
+	userEnv := envVarName(normalizedServerName, userSuffix)
+	passwordEnv := envVarName(normalizedServerName, passwordSuffix)
 
 	// user must have a value, password must be present but may be empty
 	user, _ := os.LookupEnv(userEnv)
@@ -89,7 +96,7 @@ func normalizeServerName(serverURL string) string {
 
 	// Special case for the default index. This is passed as a URL, where no other
 	// server is allowed to use this format.
-	if strings.HasPrefix(serverURL, "https://index.docker.io/v1") {
+	if strings.HasPrefix(serverURL, defaultRegistryUrl) {
 		return "INDEX_DOCKER_IO"
 	}
 
@@ -103,5 +110,57 @@ func normalizeServerName(serverURL string) string {
 
 // envVarName looks up the environment variable with the given suffix using the normalized server name.
 func envVarName(normalizedServerName string, suffix string) string {
-	return fmt.Sprintf("DOCKER_CREDENTIALS_ENV_%s_%s", normalizedServerName, suffix)
+	return fmt.Sprintf("%s_%s_%s", variablePrefix, normalizedServerName, suffix)
+}
+
+// listCredentialsForEnvironment returns a map of server URLs to their
+// credentials based on the current environment. It will only return credentials
+// for servers that have correctly formed environment variables for user and
+// password.
+func listCredentialsForEnvironment() map[string]string {
+	// Get all environment variables that start with the prefix
+	prefix := fmt.Sprintf("%s_", variablePrefix)
+	suffix := fmt.Sprintf("_%s", userSuffix)
+
+	servers := map[string]string{}
+
+	vars := os.Environ()
+	for _, v := range vars {
+		key, val, found := strings.Cut(v, "=")
+		if !found {
+			continue
+		}
+
+		serverURL := key
+
+		serverURL, found = strings.CutPrefix(serverURL, prefix)
+		if !found {
+			continue
+		}
+
+		serverURL, found = strings.CutSuffix(serverURL, suffix)
+		if !found {
+			continue
+		}
+
+		if _, _, err := credentialsForServer(serverURL); err != nil {
+			continue
+		}
+
+		serverURL = toHostname(serverURL)
+
+		// Special case. Docker always uses the full URL for the default registry,
+		// even when supplied to the CLI in short form.
+		if serverURL == "index.docker.io" {
+			serverURL = defaultRegistryUrl
+		}
+
+		servers[serverURL] = val
+	}
+
+	return servers
+}
+
+func toHostname(serverURL string) string {
+	return strings.ToLower(strings.ReplaceAll(serverURL, "_", "."))
 }
