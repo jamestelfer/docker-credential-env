@@ -216,7 +216,7 @@ func TestCredentialsForServerFailure(t *testing.T) {
 		{
 			serverURL: "example.com",
 			userEnv:   "DOCKER_CREDENTIALS_ENV_EXAMPLE_COM_USER",
-			user:      ptr("testuser"),
+			user:      new("testuser"),
 			passEnv:   "DOCKER_CREDENTIALS_ENV_EXAMPLE_COM_PASSWORD",
 		},
 	}
@@ -292,8 +292,4 @@ func setOptTestEnv(t *testing.T, key string, value *string) {
 			os.Unsetenv(key)
 		}
 	})
-}
-
-func ptr(s string) *string {
-	return &s
 }

@@ -1,6 +1,6 @@
 module github.com/jamestelfer/docker-credential-env
 
-go 1.22.4
+go 1.27
 
 require (
 	github.com/docker/docker-credential-helpers v0.9.9
