@@ -23,13 +23,14 @@ checksum:
 
 nfpms:
   - id: rpm
+    maintainer: "James Telfer <792299+jamestelfer@users.noreply.github.com>"
     formats:
       - apk
       - deb
       - rpm
 
 archives:
-  - format: tar.gz
+  - formats: [tar.gz]
     name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
 
 changelog:
@@ -37,6 +38,10 @@ changelog:
   sort: asc
 
 release:
+  # Fill release-please's draft; the shared workflow publishes after attestation.
+  draft: true
+  mode: keep-existing
+  use_existing_draft: true
   prerelease: auto
   header: |
     Distributions for this release are published as binaries for Mac, Linux and Windows below. Download, extract and install the binary appropriate to the target system in order to use it as a credential helper.
