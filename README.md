@@ -109,8 +109,7 @@ Releases at v1.0.0 and earlier predate this pipeline and have no attestations.
 `checksums.txt` is also published for checksum-only verification with
 `sha256sum --check checksums.txt`; checksums alone do not prove build provenance.
 
-For maintainers, see [Releasing](docs/releasing.md) for the release process and
-rollout prerequisites.
+For maintainers, see [Releasing](docs/releasing.md) for how to publish a release.
 
 ## Configuration
 
