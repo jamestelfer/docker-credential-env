@@ -1,0 +1,22 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions: {}
+
+jobs:
+  release:
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+    # The shared pipeline advances this ref only to reviewed commits.
+    uses: chinmina/.github/.github/workflows/goreleaser-release.yml@verified-actions
+    with:
+      token-source: octo-sts
+      disable-binstaller: true
+      disable-homebrew: true
+      disable-docker-login: true
+      disable-npm: true

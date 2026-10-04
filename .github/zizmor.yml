@@ -1,0 +1,7 @@
+rules:
+  unpinned-uses:
+    config:
+      policies:
+        # Shared workflows intentionally track the reviewed release-kit ref.
+        "chinmina/.github/*": ref-pin
+        "*": hash-pin

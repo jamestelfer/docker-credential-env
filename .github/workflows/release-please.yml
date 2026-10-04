@@ -1,0 +1,17 @@
+name: Release PR automation
+
+on:
+  push:
+    branches: [main]
+
+permissions: {}
+
+jobs:
+  release-please:
+    permissions:
+      contents: read
+      id-token: write
+    # The shared pipeline advances this ref only to reviewed commits.
+    uses: chinmina/.github/.github/workflows/release-please.yml@verified-actions
+    with:
+      token-source: octo-sts

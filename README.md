@@ -22,6 +22,95 @@ This has some benefits:
 When environment variables are set appropriately, `docker` will use the
 credentials as needed.
 
+## Installation
+
+Pre-built binaries for Linux, macOS, and Windows (amd64/arm64), plus Linux
+packages, are published to
+[GitHub Releases](https://github.com/jamestelfer/docker-credential-env/releases).
+Releases produced by the shared release pipeline carry build-provenance
+attestations — see [Verifying releases](#verifying-releases). Older releases
+(v1.0.0 and earlier) do not have these attestations.
+
+<details>
+<summary><strong>mise (recommended)</strong></summary>
+
+[mise](https://mise.jdx.dev/) installs directly from GitHub Releases via its
+[GitHub backend](https://mise.jdx.dev/dev-tools/backends/github.html). With
+`github_attestations` enabled, it verifies build provenance as well as the
+artifact checksum:
+
+```sh
+mise use -g github:jamestelfer/docker-credential-env
+```
+
+See [Verifying releases](#verifying-releases) for the provenance guarantees.
+
+</details>
+
+<details>
+<summary><strong>Manual download</strong></summary>
+
+Download the archive for your platform from the
+[releases page](https://github.com/jamestelfer/docker-credential-env/releases),
+verify its provenance, and put the binary on your `PATH`. For Linux or macOS:
+
+```sh
+OS=linux ARCH=amd64 # or darwin, arm64
+curl -fsSLO "https://github.com/jamestelfer/docker-credential-env/releases/latest/download/docker-credential-env_${OS}_${ARCH}.tar.gz"
+gh attestation verify "docker-credential-env_${OS}_${ARCH}.tar.gz" \
+  --repo jamestelfer/docker-credential-env \
+  --signer-workflow chinmina/.github/.github/workflows/goreleaser-release.yml
+tar -xzf "docker-credential-env_${OS}_${ARCH}.tar.gz" docker-credential-env
+mkdir -p ~/.local/bin
+install -m 0755 docker-credential-env ~/.local/bin/
+```
+
+Ensure `~/.local/bin` is on Docker's `PATH`. Windows archives are also `.tar.gz`;
+extract `docker-credential-env.exe` and put it on your `PATH`.
+See [Verifying releases](#verifying-releases) before installing.
+
+</details>
+
+<details>
+<summary><strong>go install</strong></summary>
+
+Build from source:
+
+```sh
+go install github.com/jamestelfer/docker-credential-env@latest
+```
+
+Ensure Go's binary installation directory is on Docker's `PATH`. Source builds
+are not covered by release artifact attestations and report the unstamped
+version `v0.0.0-unknown`.
+
+</details>
+
+## Verifying releases
+
+The shared release workflow generates SLSA build-provenance attestations for
+archives and Linux packages using [Sigstore](https://www.sigstore.dev/)
+keyless signing, before publishing the GitHub Release. No long-lived signing
+key is used. Each attested artifact is bound by digest to its source commit
+and build workflow.
+
+With an authenticated [GitHub CLI](https://cli.github.com/) (2.49.0 or newer),
+verify a downloaded artifact:
+
+```sh
+gh attestation verify docker-credential-env_linux_amd64.tar.gz \
+  --repo jamestelfer/docker-credential-env \
+  --signer-workflow chinmina/.github/.github/workflows/goreleaser-release.yml
+```
+
+The signer is the shared reusable workflow, while the source repository is
+`jamestelfer/docker-credential-env`.
+Releases at v1.0.0 and earlier predate this pipeline and have no attestations.
+`checksums.txt` is also published for checksum-only verification with
+`sha256sum --check checksums.txt`; checksums alone do not prove build provenance.
+
+For maintainers, see [Releasing](docs/releasing.md) for how to publish a release.
+
 ## Configuration
 
 > [!NOTE]
@@ -29,12 +118,6 @@ credentials as needed.
 > the daemon. All environment variables (`PATH` and others) need to be set for
 > the process calling Docker, and the executing user needs to be able to execute
 > the helper binary.
-
-### Installation
-
-The binary needs to be added to the local `PATH` in order to be accessible to
-Docker for use. The Docker CLI calls the helper (not the daemon), so the
-executing user's `PATH` is used.
 
 ### Registry configuration
 

@@ -1,0 +1,13 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "release-type": "simple",
+  "include-component-in-tag": false,
+  "bootstrap-sha": "dc7cc68cc9682c22a324799e6db15f090c09b291",
+  "packages": {
+    ".": {
+      "draft": true
+    }
+  },
+  "pull-request-header": "Automated release prepared by Release Please. Changes since the previous release are listed below.\n",
+  "pull-request-footer": "Generated from Conventional Commits since the previous release."
+}
