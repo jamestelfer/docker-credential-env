@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.3](https://github.com/jamestelfer/docker-credential-env/compare/v1.0.2...v1.0.3) (2026-10-17)
+
+
+### Bug Fixes
+
+* **deps:** pin dependencies ([#19](https://github.com/jamestelfer/docker-credential-env/issues/19)) ([eadc437](https://github.com/jamestelfer/docker-credential-env/commit/eadc437df74dfc7c5bf781dc6a41aeaddc774f92))
+
 ## [1.0.2](https://github.com/jamestelfer/docker-credential-env/compare/v1.0.1...v1.0.2) (2026-10-04)
 
 
