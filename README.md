@@ -48,6 +48,24 @@ See [Verifying releases](#verifying-releases) for the provenance guarantees.
 </details>
 
 <details>
+<summary><strong>Homebrew (macOS)</strong></summary>
+
+```sh
+brew install jamestelfer/tap/docker-credential-env
+```
+
+</details>
+
+<details>
+<summary><strong>Nix</strong></summary>
+
+```sh
+nix profile install github:jamestelfer/nixpkgs#docker-credential-env
+```
+
+</details>
+
+<details>
 <summary><strong>Manual download</strong></summary>
 
 Download the archive for your platform from the

@@ -33,6 +33,44 @@ archives:
   - formats: [tar.gz]
     name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
 
+homebrew_casks:
+  - name: docker-credential-env
+    directory: Casks
+    homepage: "https://github.com/jamestelfer/docker-credential-env"
+    description: "A Docker credentials plugin that sources Docker credentials from environment variables."
+    repository:
+      owner: jamestelfer
+      name: homebrew-tap
+      token: "{{ .Env.HOMEBREW_GITHUB_TOKEN }}"
+    # Match release.prerelease: auto — don't publish the cask for prerelease/RC
+    # tags, only for stable releases.
+    skip_upload: auto
+    binaries:
+      - docker-credential-env
+    # hooks.post.install emits the `postflight` stanza, which Homebrew has
+    # deprecated in favour of `postflight_steps`. custom_block carries the step
+    # until goreleaser ships hooks.post.install_steps (goreleaser/goreleaser#6873).
+    # `{{ "{{staged_path}}" }}` escapes Homebrew's `{{staged_path}}` token past
+    # goreleaser's template pass over the rendered cask.
+    custom_block: |
+      postflight_steps do
+        on_macos do
+          run "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "{{ "{{staged_path}}" }}/docker-credential-env"]
+        end
+      end
+
+nix:
+  - name: docker-credential-env
+    repository:
+      owner: jamestelfer
+      name: nixpkgs
+      token: "{{ .Env.NIX_GITHUB_TOKEN }}"
+    # skip publishing the recipe on a prerelease, as for the cask.
+    skip_upload: auto
+    homepage: "https://github.com/jamestelfer/docker-credential-env"
+    description: "A Docker credentials plugin that sources Docker credentials from environment variables."
+    license: "mit"
+
 changelog:
   use: github-native
   sort: asc

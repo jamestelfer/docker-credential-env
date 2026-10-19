@@ -17,6 +17,5 @@ jobs:
     with:
       token-source: octo-sts
       disable-binstaller: true
-      disable-homebrew: true
       disable-docker-login: true
       disable-npm: true
