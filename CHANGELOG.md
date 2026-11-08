@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.0.4](https://github.com/jamestelfer/docker-credential-env/compare/v1.0.3...v1.0.4) (2026-11-08)
+
+
+### Bug Fixes
+
+* **deps:** update dependency go to v1.27.3 ([#20](https://github.com/jamestelfer/docker-credential-env/issues/20)) ([e62f354](https://github.com/jamestelfer/docker-credential-env/commit/e62f354de9007e464bfb66f7074ba3135d6ffe83))
+* **deps:** update dependency goreleaser to v2.19.0 ([#21](https://github.com/jamestelfer/docker-credential-env/issues/21)) ([0b0f1ba](https://github.com/jamestelfer/docker-credential-env/commit/0b0f1baa1ff749c65fc5ef28bbcf3ef05071c7ff))
+* **deps:** update go dependencies ([#22](https://github.com/jamestelfer/docker-credential-env/issues/22)) ([beead84](https://github.com/jamestelfer/docker-credential-env/commit/beead846ca23f986f06c86db8784e3ac1c2707a3))
+* **deps:** update jamestelfer/.github digest to 25fc00f ([#25](https://github.com/jamestelfer/docker-credential-env/issues/25)) ([0adc6bc](https://github.com/jamestelfer/docker-credential-env/commit/0adc6bc0faf22dbcdc3f30e2ff7e50f331b3bb3e))
+
 ## [1.0.3](https://github.com/jamestelfer/docker-credential-env/compare/v1.0.2...v1.0.3) (2026-10-19)
 
 
