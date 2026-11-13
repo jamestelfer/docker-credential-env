@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.5](https://github.com/jamestelfer/docker-credential-env/compare/v1.0.4...v1.0.5) (2026-11-12)
+
+
+### Bug Fixes
+
+* **deps:** update dependency go to v1.27.4 ([#28](https://github.com/jamestelfer/docker-credential-env/issues/28)) ([8f1fe76](https://github.com/jamestelfer/docker-credential-env/commit/8f1fe7624bc058d7bd16dc72a81ba5a16820f335))
+
 ## [1.0.4](https://github.com/jamestelfer/docker-credential-env/compare/v1.0.3...v1.0.4) (2026-11-08)
 
 
